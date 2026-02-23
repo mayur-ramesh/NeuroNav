@@ -1,51 +1,47 @@
-# NeuroNav
-The Problem: The Invisible Urban Crisis
+# Neuro-Nav
+> **The Healthiest & Calmest Path Through the City.** > *Developed for the TR1 2026 AI Hackathon – Option 2: Smart Cities Under Pressure.*
 
-Modern navigation apps (like Google Maps) optimize purely for speed and distance. However, for the 15-20% of the population who are neurodivergent (Autism, ADHD) or suffer from anxiety, the fastest route is often the most inaccessible due to severe sensory overload (dense crowds, heavy traffic noise).
+## The Core Problem: The Invisible Urban Crisis
+Standard navigation applications (like Google Maps or Apple Maps) optimize routes purely for speed and distance. However, for the **15-20% of the population who are neurodivergent** (including those with Autism and ADHD) or individuals suffering from anxiety, the "fastest" route is often highly inaccessible. Severe sensory overload from dense crowds, heavy traffic noise, and chaotic transit hubs turns daily commuting into a high-stress ordeal. 
 
-Our Solution
+Cities are getting smarter, but navigation hasn't become more empathetic.
 
-Neuro-Nav is a real-time, AI-powered routing engine that calculates the "Healthiest & Calmest Path".
-Instead of minimizing time, our algorithm minimizes a Sensory Cost Function using live urban data.
+## Our Solution
+**Neuro-Nav** is a real-time, AI-powered routing engine that shifts the paradigm of urban navigation. Instead of minimizing time, Neuro-Nav minimizes a dynamic **"Sensory Cost Function"** to calculate the calmest, most accessible path using live urban data. 
 
-Core Features
+### Key Features
+* **Sensory Weighting Algorithm:** Highly customizable user profiles. Users input their specific triggers (e.g., high sensitivity to noise, moderate sensitivity to crowds) to generate personalized route weights.
+* **Live Urban Data Integration:** * **OneMap API:** Pulls real-time crowd density data at transit hubs and shopping districts.
+    * **LTA DataMall API:** Ingests live traffic volume data serving as a proxy for street-level noise pollution.
+* **Predictive AI Forecasting:** Leverages time-series modeling to predict crowd surges before they happen, recommending optimal departure times to avoid sensory bottlenecks.
 
-Sensory Weighting Algorithm: Users input their specific triggers (e.g., highly sensitive to noise, moderately sensitive to crowds).
+## System Architecture
+Neuro-Nav is built for speed, scalability, and real-time processing. 
 
-Live Urban APIs Integration:
 
-OneMap API: Real-time crowd density data at transit hubs and malls.
 
-LTA DataMall: Real-time traffic volume (used as a proxy for street-level noise pollution).
+| Component | Technology Stack | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | React.js, Tailwind CSS, Vite | A single-page, highly accessible interactive prototype. |
+| **Backend** | Python, FastAPI | High-performance routing logic and API management. |
+| **AI / ML** | Python, scikit-learn, Prophet | Time-series forecasting for predictive crowd modeling. |
+| **Data Sources**| OneMap API, LTA DataMall | Real-time Singapore urban metrics. |
 
-Predictive AI Forecasting: Uses time-series modeling to predict crowd surges before they happen, advising users on optimal departure times.
+## Business Viability & Scalability
+Neuro-Nav is designed with a sustainable, dual-stream revenue model:
 
-System Architecture
+1.  **Freemium B2C Model:** * *Free Tier:* Basic sensory routing and real-time navigation.
+    * *Premium Tier:* Advanced predictive scheduling, calendar integration, and custom waypoint saving.
+2.  **B2G (Business-to-Government) Licensing:** * Aggregated, anonymized accessibility data is licensed to urban planners (e.g., URA). This provides unprecedented insights into how citizens navigate sensory bottlenecks, directly aiding in the design of more inclusive "Smart Cities."
 
-Frontend Prototype: React.js + Tailwind CSS (Single Page Application dashboard for demo).
+## Local Setup & Installation
 
-Proposed Backend: Python (FastAPI) handling pathfinding logic.
+### Prerequisites
+* Node.js (v18+)
+* Python (3.10+)
 
-AI/ML: Python scikit-learn / Prophet for predictive crowd modeling.
-
-How to Run the Prototype
-
-For the hackathon demonstration, the frontend prototype has been consolidated into a single interactive React component.
-
-Clone this repository.
-
-Ensure you have Node.js installed.
-
-Install dependencies using npm install (assuming standard Vite/React setup).
-
-Run the development server using npm run dev.
-
-The core UI logic is contained within App.jsx.
-
-Hackathon Rubric Focus
-
-Clear Problem Definition: Targets a highly specific, underserved demographic with a real urban problem.
-
-Scalability: The sensory cost algorithm can be applied to any city globally with open data APIs.
-
-Business Viability: Freemium B2C model + B2G (Business-to-Government) data licensing to urban planners (e.g., URA) to design more accessible public spaces.
+### 1. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
