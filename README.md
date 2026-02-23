@@ -1,4 +1,4 @@
-# Neuro-Nav
+# NeuroNav
 > **The Healthiest & Calmest Path Through the City.** > *Developed for the TR1 2026 AI Hackathon – Option 2: Smart Cities Under Pressure.*
 
 ## The Core Problem: The Invisible Urban Crisis
