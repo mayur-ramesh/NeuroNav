@@ -7,7 +7,7 @@ Standard navigation applications (like Google Maps or Apple Maps) optimize route
 Cities are getting smarter, but navigation hasn't become more empathetic.
 
 ## Our Solution
-**Neuro-Nav** is a real-time, AI-powered routing engine that shifts the paradigm of urban navigation. Instead of minimizing time, Neuro-Nav minimizes a dynamic **"Sensory Cost Function"** to calculate the calmest, most accessible path using live urban data. 
+**NeuroNav** is a real-time, AI-powered routing engine that shifts the paradigm of urban navigation. Instead of minimizing time, NeuroNav minimizes a dynamic **"Sensory Cost Function"** to calculate the calmest, most accessible path using live urban data. 
 
 ### Key Features
 * **Sensory Weighting Algorithm:** Highly customizable user profiles. Users input their specific triggers (e.g., high sensitivity to noise, moderate sensitivity to crowds) to generate personalized route weights.
@@ -16,7 +16,7 @@ Cities are getting smarter, but navigation hasn't become more empathetic.
 * **Predictive AI Forecasting:** Leverages time-series modeling to predict crowd surges before they happen, recommending optimal departure times to avoid sensory bottlenecks.
 
 ## System Architecture
-Neuro-Nav is built for speed, scalability, and real-time processing. 
+NeuroNav is built for speed, scalability, and real-time processing. 
 
 
 
@@ -28,7 +28,7 @@ Neuro-Nav is built for speed, scalability, and real-time processing.
 | **Data Sources**| OneMap API, LTA DataMall | Real-time Singapore urban metrics. |
 
 ## Business Viability & Scalability
-Neuro-Nav is designed with a sustainable, dual-stream revenue model:
+NeuroNav is designed with a sustainable, dual-stream revenue model:
 
 1.  **Freemium B2C Model:** * *Free Tier:* Basic sensory routing and real-time navigation.
     * *Premium Tier:* Advanced predictive scheduling, calendar integration, and custom waypoint saving.
