@@ -37,11 +37,9 @@ NeuroNav is designed with a sustainable, dual-stream revenue model:
 ## Local Setup & Installation
 
 ### Prerequisites
-* Node.js (v18+)
 * Python (3.10+)
+* A modern web browser
 
 ### 1. Frontend Setup
-```bash
-cd frontend
-npm install
-npm run dev
+The frontend is built with pure HTML, CSS, and JS. No build step is required!
+Simply open `frontend/index.html` in your web browser.
