@@ -1,45 +1,138 @@
-/* Custom Styles for NeuroNav */
+/* Custom Styles for NeuroNav Premium UI */
 
 /* Ensure the map container takes up full height */
 #map {
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
 }
 
-/* Customizing Leaflet controls to match Tailwind theme */
+/* Customizing Leaflet controls to match the new dynamic theme */
 .leaflet-control-zoom a {
-    color: #4f46e5 !important;
+    color: #6366f1 !important;
     border: none !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+.leaflet-control-zoom a:hover {
+    color: #4338ca !important;
+    background: #ffffff !important;
 }
 
 .leaflet-bar {
-    border: none !important;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-    border-radius: 0.5rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+    border-radius: 0.75rem !important;
     overflow: hidden;
 }
 
-/* Range input consistent styling */
-input[type=range] {
+.leaflet-bottom {
+    z-index: 5 !important;
+    /* Keep underneath our floating UI */
+}
+
+/* -------------------------------------
+   Custom Range Input (Sensory Sliders)
+-------------------------------------- */
+.custom-range {
     -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border-radius: 999px;
+    height: 6px;
+    outline: none;
+    /* Gradient track background */
+    background: linear-gradient(to right, #6366f1 0%, #a855f7 50%, #e2e8f0 50%, #e2e8f0 100%);
+}
+
+.custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 0 3px #6366f1;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.custom-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 0 4px #4338ca;
+}
+
+/* Mozilla Support */
+.custom-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 0 3px #6366f1;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.custom-range::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 0 4px #4338ca;
+}
+
+/* -------------------------------------
+   Custom Scrollbar
+-------------------------------------- */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
 }
 
-input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: #4f46e5;
-    cursor: pointer;
-    margin-top: -6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 10px;
 }
 
-input[type=range]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 4px;
-    cursor: pointer;
-    background: #e2e8f0;
-    border-radius: 2px;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+}
+
+/* -------------------------------------
+   Animations Custom Classes
+-------------------------------------- */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-up {
+    animation: slideInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.delay-150 {
+    animation-delay: 150ms;
 }
