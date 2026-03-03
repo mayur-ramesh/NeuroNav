@@ -12,6 +12,7 @@ const LOCATIONS = [
 export default function SensoryForm({ onSearch, loading }) {
     const [originIdx, setOriginIdx] = useState(0);
     const [destIdx, setDestIdx] = useState(1);
+    const [mode, setMode] = useState('foot');
     const [noiseSens, setNoiseSens] = useState(0.5);
     const [crowdSens, setCrowdSens] = useState(0.5);
     const [predictSens, setPredictSens] = useState(0.5);
@@ -23,6 +24,7 @@ export default function SensoryForm({ onSearch, loading }) {
         const requestData = {
             origin: { lat: LOCATIONS[originIdx].lat, lng: LOCATIONS[originIdx].lng },
             destination: { lat: LOCATIONS[destIdx].lat, lng: LOCATIONS[destIdx].lng },
+            mode: mode,
             profile: {
                 noise_sensitivity: parseFloat(noiseSens),
                 crowd_sensitivity: parseFloat(crowdSens),
@@ -37,6 +39,19 @@ export default function SensoryForm({ onSearch, loading }) {
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Travel Mode</label>
+                    <select
+                        className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        value={mode}
+                        onChange={e => setMode(e.target.value)}
+                    >
+                        <option value="foot">Walking</option>
+                        <option value="bike">Cycling</option>
+                        <option value="driving">Driving</option>
+                    </select>
+                </div>
+
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">Origin</label>
                     <select

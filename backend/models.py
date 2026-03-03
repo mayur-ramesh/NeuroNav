@@ -14,7 +14,8 @@ class SensoryProfile(BaseModel):
 class RouteRequest(BaseModel):
     origin: Coordinate
     destination: Coordinate
-    profile: SensoryProfile = Field(default_factory=SensoryProfile)
+    profile: SensoryProfile
+    mode: str = Field(default="foot", description="Transportation mode: 'foot', 'bike', or 'driving'")
 
 class RouteSegment(BaseModel):
     start: Coordinate
@@ -28,6 +29,7 @@ class RouteSegment(BaseModel):
 
 class RouteOption(BaseModel):
     id: str = Field(..., description="Unique identifier for this route option")
+    category: str = Field(default="Normal Route", description="Specialized label like 'Nature Oriented'")
     total_distance: float = Field(..., description="Total distance in meters")
     total_duration: float = Field(..., description="Total expected duration in seconds")
     total_sensory_score: float = Field(..., description="Total aggregated sensory cost for the entire route")

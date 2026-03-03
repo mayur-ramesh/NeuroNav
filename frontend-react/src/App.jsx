@@ -22,7 +22,12 @@ function App() {
             })
 
             if (!response.ok) {
-                throw new Error('Failed to fetch routes. Ensure backend is running.')
+                try {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to fetch routes.');
+                } catch (e) {
+                    throw new Error('Failed to fetch routes. Backend might be down.');
+                }
             }
 
             const data = await response.json()
@@ -40,8 +45,8 @@ function App() {
     return (
         <div className="flex h-screen w-full bg-slate-50 text-slate-800 overflow-hidden">
             {/* Sidebar for Form and Route list */}
-            <div className="w-[380px] min-w-[320px] bg-white shadow-xl z-50 flex flex-col h-full border-r border-slate-200">
-                <div className="p-6 border-b border-slate-200">
+            <div className="w-[380px] min-w-[320px] bg-white shadow-xl z-50 flex flex-col h-full border-r border-slate-200 overflow-y-auto">
+                <div className="p-6 border-b border-slate-200 shrink-0">
                     <div className="flex items-center space-x-2 mb-6">
                         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex justify-center items-center">
                             <span className="text-white font-bold text-sm">NN</span>
@@ -59,7 +64,7 @@ function App() {
                 </div>
 
                 {/* Route List */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+                <div className="flex-1 p-4 space-y-3 bg-slate-50">
                     {routes.length === 0 && !loading && !error && (
                         <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center space-y-4">
                             <svg className="w-12 h-12 stroke-current opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,12 +85,12 @@ function App() {
                         >
                             <div className="flex justify-between items-center mb-3">
                                 <span className={`font-bold ${idx === 0 ? 'text-indigo-700' : 'text-slate-700'}`}>
-                                    {idx === 0 ? 'Recommended Route' : `Alternative ${idx}`}
+                                    {route.category}
                                 </span>
                                 <span className="flex items-center space-x-1 bg-white px-2 py-1 rounded-md shadow-sm border border-slate-100 text-xs font-semibold text-slate-700">
                                     <span className={`w-2 h-2 rounded-full ${route.total_sensory_score < 3.0 ? 'bg-green-500' :
-                                            route.total_sensory_score < 6.0 ? 'bg-amber-500' :
-                                                'bg-red-500'
+                                        route.total_sensory_score < 6.0 ? 'bg-amber-500' :
+                                            'bg-red-500'
                                         }`}></span>
                                     <span>Cost: {route.total_sensory_score.toFixed(1)}</span>
                                 </span>

@@ -5,7 +5,7 @@ from models import RouteRequest, RouteOption, RouteSegment, Coordinate
 from typing import List
 
 # OSRM (Open Source Routing Machine) API - No key required for demo usage
-OSRM_BASE_URL = "http://router.project-osrm.org/route/v1/foot"
+# OSRM_BASE_URL = "http://router.project-osrm.org/route/v1/foot" # This constant is no longer needed as the profile is dynamic
 
 async def get_base_routes(request: RouteRequest) -> List[RouteOption]:
     """
@@ -14,7 +14,11 @@ async def get_base_routes(request: RouteRequest) -> List[RouteOption]:
     
     # OSRM format: {longitude},{latitude};{longitude},{latitude}
     coords = f"{request.origin.lng},{request.origin.lat};{request.destination.lng},{request.destination.lat}"
-    url = f"{OSRM_BASE_URL}/{coords}"
+    
+    # Use the appropriate routing profile based on transport mode from the request
+    # OSRM profiles: foot, car, bike
+    osrm_profile = request.mode.value if hasattr(request.mode, 'value') else request.mode # Assuming request.mode is an Enum or string
+    url = f"http://router.project-osrm.org/route/v1/{osrm_profile}/{coords}"
     
     params = {
         "alternatives": "true",
