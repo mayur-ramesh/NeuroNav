@@ -120,6 +120,59 @@ async def get_route(request: RouteRequest, x_diagnostics: bool = Header(False, a
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
+from pydantic import BaseModel as PydanticBaseModel
+from typing import List as TypingList
+
+class SignalPoint(PydanticBaseModel):
+    lat: float
+    lng: float
+    noise: float
+    crowd: float
+    nature: float
+
+class SignalsResponse(PydanticBaseModel):
+    points: TypingList[SignalPoint]
+
+@app.get("/api/signals", response_model=SignalsResponse)
+async def get_signals(
+    min_lat: float = 1.25,
+    max_lat: float = 1.45,
+    min_lng: float = 103.65,
+    max_lng: float = 104.0,
+    resolution: int = 12
+):
+    """
+    Returns a grid of environmental signal data (noise, crowd, nature)
+    for overlay visualization on the map. Uses simulated Singapore data.
+    """
+    from services.signals import SimulatedSignalProvider
+    from models import Coordinate
+    
+    provider = SimulatedSignalProvider()
+    points = []
+    
+    lat_step = (max_lat - min_lat) / resolution
+    lng_step = (max_lng - min_lng) / resolution
+    
+    for i in range(resolution + 1):
+        for j in range(resolution + 1):
+            lat = min_lat + i * lat_step
+            lng = min_lng + j * lng_step
+            coord = Coordinate(lat=lat, lng=lng)
+            
+            noise = await provider.get_noise(coord)
+            crowd = await provider.get_crowd(coord)
+            nature = await provider.get_nature(coord)
+            
+            points.append(SignalPoint(
+                lat=lat, lng=lng,
+                noise=round(noise, 3),
+                crowd=round(crowd, 3),
+                nature=round(nature, 3)
+            ))
+    
+    return SignalsResponse(points=points)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

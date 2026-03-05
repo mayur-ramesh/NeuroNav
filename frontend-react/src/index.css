@@ -2,6 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    font-family: 'Inter', sans-serif;
+/* Global resets */
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Leaflet map must always fill its container */
+.leaflet-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 300px;
+    z-index: 0;
+}
+
+/* Leaflet tile layer fixes (prevent grey tiles) */
+.leaflet-tile-pane {
+    z-index: 1;
+}
+
+/* Override Leaflet popup styles for cleaner look */
+.leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+    padding: 0 !important;
+}
+
+.leaflet-popup-content {
+    margin: 12px 16px !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.leaflet-popup-tip {
+    box-shadow: none !important;
+}
+
+/* Custom scrollbar for left panel */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Slider styling enhancement */
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 999px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4f46e5;
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"].accent-green-600::-webkit-slider-thumb {
+    background: #16a34a;
+}
+
+input[type="range"].accent-sky-600::-webkit-slider-thumb {
+    background: #0284c7;
 }
