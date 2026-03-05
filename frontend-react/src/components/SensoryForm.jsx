@@ -30,7 +30,7 @@ const MODES = [
     { id: 'mrt', icon: TrainFront, label: 'MRT' }
 ];
 
-export default function SensoryForm({ onSearch, loading, uxMode }) {
+export default function SensoryForm({ onSearch, loading, uxMode, overlays, onOverlayToggle }) {
     const [originIdx, setOriginIdx] = useState(0);
     const [destIdx, setDestIdx] = useState(1);
     const [mode, setMode] = useState('walking');
@@ -40,12 +40,6 @@ export default function SensoryForm({ onSearch, loading, uxMode }) {
     const [predictSens, setPredictSens] = useState(0.8);
     const [natureSens, setNatureSens] = useState(0.5);
     const [shelterSens, setShelterSens] = useState(0.8);
-
-    const [overlays, setOverlays] = useState({
-        crowd: false,
-        noise: false,
-        green: false
-    });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -83,8 +77,8 @@ export default function SensoryForm({ onSearch, loading, uxMode }) {
                                 type="button"
                                 onClick={() => setMode(m.id)}
                                 className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all ${isSelected
-                                        ? 'bg-indigo-600 text-white shadow-md'
-                                        : 'text-slate-500 hover:bg-indigo-50 hover:text-indigo-700'
+                                    ? 'bg-indigo-600 text-white shadow-md'
+                                    : 'text-slate-500 hover:bg-indigo-50 hover:text-indigo-700'
                                     }`}
                                 title={m.label}
                                 aria-label={m.label}
@@ -155,16 +149,16 @@ export default function SensoryForm({ onSearch, loading, uxMode }) {
                 </h3>
                 <div className="flex gap-2 flex-wrap">
                     <ToggleBtn
-                        label="Crowds" active={overlays.crowd}
-                        onClick={() => setOverlays(o => ({ ...o, crowd: !o.crowd }))}
+                        label="🔊 Noise" active={overlays.noise}
+                        onClick={() => onOverlayToggle('noise')}
                     />
                     <ToggleBtn
-                        label="Noise" active={overlays.noise}
-                        onClick={() => setOverlays(o => ({ ...o, noise: !o.noise }))}
+                        label="👥 Crowds" active={overlays.crowd}
+                        onClick={() => onOverlayToggle('crowd')}
                     />
                     <ToggleBtn
-                        label="Greenery" active={overlays.green}
-                        onClick={() => setOverlays(o => ({ ...o, green: !o.green }))}
+                        label="🌿 Greenery" active={overlays.green}
+                        onClick={() => onOverlayToggle('green')}
                     />
                 </div>
             </div>
