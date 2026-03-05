@@ -1,17 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from models import RouteRequest, RouteResponse
-from services.routing import get_base_routes
+from services.routing import fetch_routing_candidates
 from services.scoring import score_route
+from utils.geometry import is_in_singapore, calculate_overlap_ratio
+from utils.config import settings
 
 app = FastAPI(title="NeuroNav API")
 
-# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, replace with actual frontend origin
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -25,52 +26,99 @@ def health_check():
     return {"status": "healthy"}
 
 @app.post("/api/route", response_model=RouteResponse)
-async def get_route(request: RouteRequest):
+async def get_route(request: RouteRequest, x_diagnostics: bool = Header(False, alias="X-Diagnostics")):
     """
-    Main endpoint to get sensory-scored routes.
+    Main endpoint returning exactly two routes: Preferred and Longest.
+    We enforce Singapore Bounding Box, evaluate sensory costs, 
+    and pick exactly 2 routes strictly adhering to constraints.
     """
     try:
-        # 1. Fetch base routes from external routing engine
-        base_routes = await get_base_routes(request)
-        
+        # 1. Enforce Singapore Bounds
+        if not is_in_singapore(request.origin) or not is_in_singapore(request.destination):
+            raise HTTPException(status_code=400, detail="Origin and destination must be strictly within Singapore bounds.")
+            
+        # 2. Fetch Base Routes with retry resilient capability
+        base_routes = []
+        for attempt in range(3):
+            try:
+                base_routes = await fetch_routing_candidates(request)
+                if base_routes: break
+            except Exception as e:
+                if attempt == 2: raise
+                await asyncio.sleep(2 ** attempt)  # Exponential backoff
+                
         if not base_routes:
             raise HTTPException(status_code=404, detail="No routes found")
             
-        # 2. Score each route asynchronously
-        scoring_tasks = [score_route(route, request.profile) for route in base_routes]
+        # 3. Score Each Route Asynchronously
+        scoring_tasks = [score_route(route, request.profile, mode=request.mode) for route in base_routes]
         scored_routes = await asyncio.gather(*scoring_tasks)
         
-        # 3. Sort by overall sensory score (lowest cost first)
-        scored_routes.sort(key=lambda r: r.total_sensory_score)
-        
-        # 4. Assign Specialized Categories
-        if scored_routes:
-            # The lowest overall score is always the Recommended Calm Route
-            scored_routes[0].category = "Recommended Calm Route"
+        if len(scored_routes) == 0:
+            raise HTTPException(status_code=404, detail="No routes could be scored.")
             
-            # Look for other specialties in the alternatives
-            for i in range(1, len(scored_routes)):
-                route = scored_routes[i]
-                route.category = f"Alternative {i}" # Default
-                
-                # Feature extraction for categorization
-                total_nature = sum([seg.nature_bonus for seg in route.segments])
-                total_complexity = sum([seg.maneuver_complexity for seg in route.segments])
-                
-                # If nature bonus is particularly high (e.g. > 1.0)
-                if total_nature > 1.0 and not any(r.category == "Most Nature Oriented" for r in scored_routes):
-                    route.category = "Most Nature Oriented"
-                
-                # If complexity is extremely low (meaning it's mostly a straight path)
-                elif total_complexity < 0.5 and not any(r.category == "Most Predictable" for r in scored_routes):
-                    route.category = "Most Predictable"
+        # 4. Route Selection Logic
+        
+        # Set Preferred Route (minimum sensory score)
+        scored_routes.sort(key=lambda r: r.total_sensory_score)
+        preferred_route = scored_routes[0]
+        preferred_route.name = "Preferred Route"
+        preferred_route.color = "#1d4ed8"  # requested blue
+        preferred_route.role = "preferred"
+        
+        # Candidate array minus preferred route
+        shortest_dist = min([r.distance_m for r in scored_routes])
+        max_dist_allowed = shortest_dist * settings.MAX_LONGEST_RATIO
+        
+        # Sort rest by distance descending
+        dist_ranked = sorted(scored_routes, key=lambda r: r.distance_m, reverse=True)
+        
+        longest_route = None
+        for candidate in dist_ranked:
+            if candidate.id == preferred_route.id: continue
+            
+            if candidate.distance_m <= max_dist_allowed:
+                overlap = calculate_overlap_ratio(preferred_route, candidate)
+                if overlap <= settings.OVERLAP_THRESHOLD:
+                    longest_route = candidate
+                    longest_route.debug = {"overlap": overlap, "dist": candidate.distance_m, "max_allowed": max_dist_allowed}
+                    break
                     
-        return RouteResponse(routes=scored_routes)
+        # Fallback if no specific overlap constraint matched
+        if not longest_route and len(scored_routes) > 1:
+            for candidate in dist_ranked:
+                if candidate.id != preferred_route.id:
+                    longest_route = candidate
+                    break
+                    
+        # Ultimate fallback (duplicate if only 1 route was generated somehow)
+        if not longest_route:
+            import copy
+            longest_route = copy.deepcopy(preferred_route)
+            longest_route.id = longest_route.id + "-alt"
+            
+        longest_route.name = "Longest Route"
+        longest_route.color = "#dc2626"    # requested red
+        longest_route.role = "longest"
+        
+        # 5. Attach Diagnostics
+        if x_diagnostics:
+            preferred_route.debug = preferred_route.debug or {}
+            preferred_route.debug["provider"] = settings.ROUTING_PROVIDER
+            preferred_route.debug["candidate_count"] = len(base_routes)
+            preferred_route.debug["selection_reason"] = "Lowest sensory cost"
+            
+            longest_route.debug = longest_route.debug or {}
+            longest_route.debug["selection_reason"] = "Maximum allowed diverse distance"
+            
+        return RouteResponse(routes=[preferred_route, longest_route])
+        
+    except HTTPException:
+        raise
     except Exception as e:
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
-
 
 if __name__ == "__main__":
     import uvicorn

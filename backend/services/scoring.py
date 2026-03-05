@@ -1,60 +1,53 @@
-import asyncio
-from models import RouteOption, SensoryProfile
-from services.external_data import get_lta_traffic_data, get_onemap_crowd_data, get_green_space_data
+from models import RouteOption, SensoryProfile, RouteMode, Coordinate
+from services.signals import get_signal_provider
+from utils.config import settings
 
-async def score_route(route: RouteOption, profile: SensoryProfile) -> RouteOption:
+async def score_route(route: RouteOption, profile: SensoryProfile, use_live_signals: bool = False, mode: RouteMode = RouteMode.walking) -> RouteOption:
     """
-    Calculates a sensory cost for the route based on environmental data
-    and the user's specific sensitivities. Mutates the route in-place
-    to add segment scores and total score.
+    Calculates a sensory cost for the route based on user profile and environmental signals.
+    Formula: cost = timeWeight*time + envWeight*(noise*n_sens + crowd*c_sens + pred*p_pref - nature*n_pref - shelter*s_pref)
     """
+    signal_provider = get_signal_provider(use_live_signals)
     total_score = 0.0
     
     for segment in route.segments:
-        # Use segment midpoint or start for data querying
-        lat = (segment.start.lat + segment.end.lat) / 2
-        lng = (segment.start.lng + segment.end.lng) / 2
+        # Midpoint for querying context
+        mid_lat = (segment.start.lat + segment.end.lat) / 2.0
+        mid_lng = (segment.start.lng + segment.end.lng) / 2.0
+        mid_coord = Coordinate(lat=mid_lat, lng=mid_lng)
         
-        # Fetch real-time (or mock) external data
-        # To speed this up, we would ideally batch these queries or cache them
-        noise_level = await get_lta_traffic_data(lat, lng)
-        crowd_level = await get_onemap_crowd_data(lat, lng)
-        greenery_level = await get_green_space_data(lat, lng)
+        noise_level = await signal_provider.get_noise(mid_coord)
+        crowd_level = await signal_provider.get_crowd(mid_coord)
+        nature_level = await signal_provider.get_nature(mid_coord)
+        shelter_level = await signal_provider.get_shelter(mid_coord)
         
-        # Calculate penalty based on user's sensitivity profile
-        # Both levels are 0-1, sensitivities are 0-1.
-        noise_penalty = noise_level * profile.noise_sensitivity
-        crowd_penalty = crowd_level * profile.crowd_sensitivity
+        noise_cost = noise_level * profile.noise_sensitivity
+        crowd_cost = crowd_level * profile.crowd_sensitivity
+        nature_reward = nature_level * profile.nature_preference
+        shelter_reward = shelter_level * profile.shelter_preference
         
-        # Predictability Metric:
-        # A route that requires constant turning or complex maneuvers can be stressful.
-        # "Walk" is generally simple. "Turn right", "Slight left" etc add complexity.
-        is_complex_turn = segment.instruction.lower() not in ["walk", "depart", "arrive", "continue"]
-        maneuver_penalty = 1.0 if is_complex_turn else 0.0 
-        predictability_penalty = maneuver_penalty * profile.predictability_preference
+        # Predictability penalty (more complex instructions = higher penalty)
+        instruction = segment.instruction.lower()
+        is_complex = instruction not in ["walk", "depart", "arrive", "continue", "straight", "proceed"]
+        maneuver_complexity = 1.0 if is_complex else 0.0
+        pred_cost = maneuver_complexity * profile.predictability_preference
         
-        # Nature Metric:
-        # Reward routes that go through parks/nature (decreases the score)
-        nature_reward = greenery_level * profile.nature_preference
+        # Core environmental score
+        env_score = noise_cost + crowd_cost + pred_cost - (nature_reward + shelter_reward)
         
-        # We weigh the standard environmental penalties by the distance (in 100s of meters).
-        # A 1km walk through a high-penalty zone is worse than 100m.
-        distance_weight = segment.distance / 100.0 if segment.distance > 0 else 0.1
+        # Normalize weighting via duration limits (assuming constant proxy for distance/time ratio)
+        weight_s = max(1.0, segment.duration_s)
+        time_cost = settings.TIME_WEIGHT * weight_s
         
-        # The maneuver penalty is a fixed point cost, independent of distance
-        # The nature reward is distance dependent (more time in a park is better)
+        # Distribute the environmental scale factor per minute of exposure
+        segment_score = time_cost + env_score * (weight_s / 60.0)
+        segment_score = max(0.0, segment_score) # Lower bound at zero
         
-        # Combine into a single segment score.
-        # Ensure the score never goes negative even if the nature reward is high
-        environmental_cost = (noise_penalty + crowd_penalty - nature_reward) * distance_weight
-        segment_score = max(0.0, environmental_cost) + predictability_penalty
-        
-        # Update the segment with new fields and score
-        segment.maneuver_complexity = predictability_penalty
+        segment.maneuver_complexity = maneuver_complexity
         segment.nature_bonus = nature_reward
         segment.sensory_score = segment_score
+        
         total_score += segment_score
         
-    # Apply total score to the route option
     route.total_sensory_score = total_score
     return route

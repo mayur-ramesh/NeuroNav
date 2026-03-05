@@ -22,12 +22,16 @@ function App() {
             })
 
             if (!response.ok) {
+                let errorMessage = 'Failed to fetch routes. Backend might be down.';
                 try {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Failed to fetch routes.');
+                    if (errorData.detail) {
+                        errorMessage = typeof errorData.detail === 'string' ? errorData.detail : JSON.stringify(errorData.detail);
+                    }
                 } catch (e) {
-                    throw new Error('Failed to fetch routes. Backend might be down.');
+                    // Ignore JSON parse errors
                 }
+                throw new Error(errorMessage);
             }
 
             const data = await response.json()

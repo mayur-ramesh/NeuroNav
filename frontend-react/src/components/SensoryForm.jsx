@@ -12,7 +12,7 @@ const LOCATIONS = [
 export default function SensoryForm({ onSearch, loading }) {
     const [originIdx, setOriginIdx] = useState(0);
     const [destIdx, setDestIdx] = useState(1);
-    const [mode, setMode] = useState('foot');
+    const [mode, setMode] = useState('walking');
     const [noiseSens, setNoiseSens] = useState(0.5);
     const [crowdSens, setCrowdSens] = useState(0.5);
     const [predictSens, setPredictSens] = useState(0.5);
@@ -46,8 +46,8 @@ export default function SensoryForm({ onSearch, loading }) {
                         value={mode}
                         onChange={e => setMode(e.target.value)}
                     >
-                        <option value="foot">Walking</option>
-                        <option value="bike">Cycling</option>
+                        <option value="walking">Walking</option>
+                        <option value="cycling">Cycling</option>
                         <option value="driving">Driving</option>
                     </select>
                 </div>

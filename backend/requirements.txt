@@ -6,3 +6,6 @@ requests
 python-dotenv
 httpx
 polyline
+pydantic-settings
+shapely
+pytest
