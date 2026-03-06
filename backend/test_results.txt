@@ -1,0 +1,19 @@
+NeuroNav Route Test: Orchard Road -> Marina Bay
+
+[walking ] status=200
+  preferred      74.5min   5.59km   4.5km/h  234pts
+  longest       120.1min   9.00km   4.5km/h  397pts
+[driving ] status=200
+  preferred       9.9min   5.59km  33.8km/h  234pts
+  longest        15.5min   9.00km  34.8km/h  397pts
+[cycling ] status=200
+  preferred      22.3min   5.59km  15.0km/h  234pts
+  longest        36.0min   9.00km  15.0km/h  397pts
+[bus     ] status=200
+  preferred      36.1min   6.14km  10.2km/h  211pts
+  longest        36.8min   6.39km  10.4km/h  234pts
+[mrt     ] status=200
+  preferred      85.3min  47.32km  33.3km/h   67pts
+  longest       115.3min  58.56km  30.5km/h  116pts
+
+Done.

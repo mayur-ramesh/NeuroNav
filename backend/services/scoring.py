@@ -21,10 +21,29 @@ async def score_route(route: RouteOption, profile: SensoryProfile, use_live_sign
         nature_level = await signal_provider.get_nature(mid_coord)
         shelter_level = await signal_provider.get_shelter(mid_coord)
         
-        noise_cost = noise_level * profile.noise_sensitivity
-        crowd_cost = crowd_level * profile.crowd_sensitivity
-        nature_reward = nature_level * profile.nature_preference
-        shelter_reward = shelter_level * profile.shelter_preference
+        # Apply mode-specific exposure factors
+        # Walking: full exposure to environment
+        # Driving: shielded from weather and crowds, reduced noise
+        # Bus: medium exposure to crowds/noise, high shelter
+        # MRT: high crowd exposure, full shelter
+        exposure_factors = {
+            RouteMode.walking: {"noise": 1.0, "crowd": 1.0, "nature": 1.0, "shelter": 1.0},
+            RouteMode.cycling: {"noise": 1.0, "crowd": 0.8, "nature": 1.0, "shelter": 1.0},
+            RouteMode.driving: {"noise": 0.3, "crowd": 0.1, "nature": 0.5, "shelter": 0.0}, # Shelter doesn't matter, always dry
+            RouteMode.bus:     {"noise": 0.5, "crowd": 0.8, "nature": 0.5, "shelter": 0.2}, # Mostly sheltered
+            RouteMode.mrt:     {"noise": 0.6, "crowd": 1.5, "nature": 0.0, "shelter": 0.0}, # Underground/stations are crowded
+        }
+        factors = exposure_factors.get(mode, exposure_factors[RouteMode.walking])
+        
+        noise_cost = noise_level * profile.noise_sensitivity * factors["noise"]
+        crowd_cost = crowd_level * profile.crowd_sensitivity * factors["crowd"]
+        nature_reward = nature_level * profile.nature_preference * factors["nature"]
+        
+        # If driving/transit, shelter is less of a concern because user is inside
+        # We model this by giving a flat reward or ignoring the cost
+        shelter_reward = shelter_level * profile.shelter_preference * factors["shelter"]
+        if mode in [RouteMode.driving, RouteMode.mrt]:
+            shelter_reward = profile.shelter_preference # Free shelter bonus for being inside
         
         # Predictability penalty (more complex instructions = higher penalty)
         instruction = segment.instruction.lower()

@@ -83,8 +83,8 @@ export default function SensoryForm({ onSearch, loading, uxMode, overlays, onOve
                                 title={m.label}
                                 aria-label={m.label}
                             >
-                                <Icon className={`w-6 h-6 ${isSelected ? 'stroke-[2.5px]' : 'stroke-2'}`} />
-                                <span className={`text-[10px] sm:text-xs mt-1 font-bold ${isSelected ? 'opacity-100' : 'opacity-75'}`}>
+                                <Icon className={`w-6 h-6 pointer-events-none ${isSelected ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                                <span className={`text-[10px] sm:text-xs mt-1 font-bold pointer-events-none ${isSelected ? 'opacity-100' : 'opacity-75'}`}>
                                     {m.label}
                                 </span>
                             </button>
