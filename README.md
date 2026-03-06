@@ -2,7 +2,7 @@
 > **The Healthiest & Calmest Path Through the City.** > *Developed for the TR1 2026 AI Hackathon – Option 2: Smart Cities Under Pressure.*
 
 ## The Core Problem: The Invisible Urban Crisis
-Navigation applications optimise routes based on speed and distance, assuming efficiency is the primary goal for all users. However, for individuals with Autism Spectrum Disorder (ASD), crowded spaces, loud traffic environments, and complex transit hubs can trigger sensory overload and significant distress. Current routing systems do not account for sensory sensitivities, forcing autistic commuters to navigate environments that are technically efficient but psychologically overwhelming.
+Modern navigation applications optimise routes primarily based on speed and distance, assuming efficiency is the main priority for all users. However, for individuals with Autism Spectrum Disorder (ASD) and the caregivers who support them, environments such as crowded spaces, loud traffic areas, and complex transit hubs can lead to sensory overload and significant distress. Because current routing systems do not consider sensory sensitivities, caregivers and autistic individuals are often forced to navigate routes that are technically efficient but emotionally and psychologically overwhelming.
 
 ## Our Solution
 **NeuroNav** is a real-time, AI-powered routing engine that shifts the paradigm of urban navigation. Instead of minimizing time, NeuroNav minimizes a dynamic **"Sensory Cost Function"** to calculate the calmest, most accessible path using live urban data. 
