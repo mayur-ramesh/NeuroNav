@@ -101,9 +101,7 @@ function App() {
                 <div className="px-6 pt-5 pb-4 border-b border-slate-100 shrink-0 bg-gradient-to-b from-indigo-50/50 to-white">
                     <div className="flex justify-between items-center mb-5">
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 flex justify-center items-center shadow-lg shadow-indigo-200">
-                                <span className="text-white font-black text-lg">N</span>
-                            </div>
+                            <img src="/logo.png" alt="NeuroNav" className="w-10 h-10 rounded-xl shadow-lg shadow-indigo-200 object-cover" />
                             <div>
                                 <h1 className={`${headingClass} font-extrabold tracking-tight text-indigo-900 leading-none`}>NeuroNav</h1>
                                 <p className="text-[11px] text-indigo-400 font-medium">Calm Navigation for Singapore</p>
@@ -178,8 +176,8 @@ function App() {
                                             key={route.id}
                                             onClick={() => setSelectedRoute(route)}
                                             className={`rounded-2xl border-2 cursor-pointer overflow-hidden transition-all duration-150 ${isSelected
-                                                    ? `border-${accentColor}-500 shadow-lg shadow-${accentColor}-100 ring-2 ring-${accentColor}-200`
-                                                    : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
+                                                ? `border-${accentColor}-500 shadow-lg shadow-${accentColor}-100 ring-2 ring-${accentColor}-200`
+                                                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-md'
                                                 }`}
                                         >
                                             {/* Card Header */}
@@ -192,10 +190,10 @@ function App() {
                                                         </h4>
                                                     </div>
                                                     <div className={`px-2.5 py-1 rounded-lg text-xs font-bold ${route.total_sensory_score < 4
-                                                            ? 'bg-green-100 text-green-700'
-                                                            : route.total_sensory_score < 8
-                                                                ? 'bg-amber-100 text-amber-700'
-                                                                : 'bg-red-100 text-red-700'
+                                                        ? 'bg-green-100 text-green-700'
+                                                        : route.total_sensory_score < 8
+                                                            ? 'bg-amber-100 text-amber-700'
+                                                            : 'bg-red-100 text-red-700'
                                                         }`}>
                                                         Score: {route.total_sensory_score.toFixed(1)}
                                                     </div>
