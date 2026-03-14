@@ -1,5 +1,7 @@
 # NeuroNav
-> **The Healthiest & Calmest Path Through the City.** > *Developed for the TR1 2026 AI Hackathon – Option 2: Smart Cities Under Pressure.*
+> 🏆 **1st Place Winner - TR1 2026 AI Hackathon** (Option 2: Smart Cities Under Pressure) 🏆
+>
+> **The Healthiest & Calmest Path Through the City.**
 
 ## The Core Problem: The Invisible Urban Crisis
 Modern navigation applications optimise routes primarily based on speed and distance, assuming efficiency is the main priority for all users. However, for individuals with Autism Spectrum Disorder (ASD) and the caregivers who support them, environments such as crowded spaces, loud traffic areas, and complex transit hubs can lead to sensory overload and significant distress. Because current routing systems do not consider sensory sensitivities, caregivers and autistic individuals are often forced to navigate routes that are technically efficient but emotionally and psychologically overwhelming.
@@ -41,3 +43,4 @@ NeuroNav is designed with a sustainable, dual-stream revenue model:
 ### 1. Frontend Setup
 The frontend is built with pure HTML, CSS, and JS. No build step is required!
 Simply open `frontend/index.html` in your web browser.
+
